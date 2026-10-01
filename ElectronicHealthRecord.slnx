@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="ElectronicHealthRecord.Api/ElectronicHealthRecord.Api.csproj" />
+  <Project Path="ElectronicHealthRecord.Application/ElectronicHealthRecord.Application.csproj" />
+  <Project Path="ElectronicHealthRecord.Domain/ElectronicHealthRecord.Domain.csproj" />
+  <Project Path="ElectronicHealthRecord.Infrastructure/ElectronicHealthRecord.Infrastructure.csproj" />
+</Solution>
