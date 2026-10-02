@@ -1,6 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.12" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\ElectronicHealthRecord.Domain\ElectronicHealthRecord.Domain.csproj" />
     <ProjectReference Include="..\ElectronicHealthRecord.Application\ElectronicHealthRecord.Application.csproj" />
   </ItemGroup>
