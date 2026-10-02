@@ -10,20 +10,20 @@ public class PacienteConfiguration : IEntityTypeConfiguration<Paciente>
     {
         builder.ToTable("Pacientes");
 
-        builder.HasKey(propa => propa.Id);
+        builder.HasKey(p => p.Id);
 
-        builder.Property(propa => propa.Nome)
+        builder.Property(p => p.Nome)
             .IsRequired()
             .HasMaxLength(150);
 
-        builder.Property(propa => propa.Cpf)
+        builder.Property(p => p.Cpf)
             .IsRequired()
             .HasMaxLength(14);
 
-        builder.HasIndex(propa => propa.Cpf)
+        builder.HasIndex(p => p.Cpf)
             .IsUnique();
 
-        builder.Property(propa => propa.Telefone)
+        builder.Property(p => p.Telefone)
             .HasMaxLength(20);
     }
 }
