@@ -8,7 +8,6 @@ public class Paciente
     public DateOnly DataNascimento { get; private set; }
     public string Telefone { get; private set; } = string.Empty;
 
-    // Construtor protegido exigido pelo Entity Framework Core para materialização de dados
     protected Paciente() { }
 
     public Paciente(string nome, string cpf, DateOnly dataNascimento, string telefone)
