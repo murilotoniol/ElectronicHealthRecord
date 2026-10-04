@@ -28,7 +28,7 @@ namespace ElectronicHealthRecord.Application.Services
                 request.Telefone
                 );
 
-            await _pacienteRepository.AdicionarAsync(paciente);
+            await _pacienteRepository.CriarAsync(paciente);
 
             return new PacienteResponse(
                 paciente.Id,

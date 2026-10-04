@@ -7,6 +7,6 @@ namespace ElectronicHealthRecord.Application.Interfaces
         Task<Paciente?> ObterPorIdAsync(Guid id);
         Task<Paciente?> ObterPorCpfAsync(string cpf);
         Task<IEnumerable<Paciente>> ObterTodosAsync();
-        Task AdicionarAsync(Paciente paciente);
+        Task CriarAsync(Paciente paciente);
     }
 }
