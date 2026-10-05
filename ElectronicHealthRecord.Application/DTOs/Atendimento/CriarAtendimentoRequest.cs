@@ -5,7 +5,6 @@ namespace ElectronicHealthRecord.Application.DTOs.Atendimento
     public record CriarAtendimentoRequest(
         Guid PacienteId,
         Guid ProfissionalId,
-        DateTime DataHora,
-        StatusAtendimento Status
+        DateTime DataHora
     );
 }
