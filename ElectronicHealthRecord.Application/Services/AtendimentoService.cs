@@ -21,7 +21,7 @@ namespace ElectronicHealthRecord.Application.Services
                 request.DataHora
             );
 
-            await _atendimentoRepository.AdicionarAsync(atendimento);
+            await _atendimentoRepository.CriarAsync(atendimento);
 
             return new AtendimentoResponse(
                 atendimento.Id,
@@ -35,6 +35,11 @@ namespace ElectronicHealthRecord.Application.Services
         public async Task<AtendimentoResponse> ObterPorIdAsync(Guid id)
         {
             var atendimento = await _atendimentoRepository.ObterPorIdAsync(id);
+
+            if (atendimento == null)
+            {
+                throw new KeyNotFoundException($"Atendimento com ID {id} não encontrado.");
+            }
 
             return new AtendimentoResponse(
                 atendimento.Id,

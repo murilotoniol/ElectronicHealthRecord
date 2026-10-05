@@ -29,7 +29,7 @@ namespace ElectronicHealthRecord.Infrastructure.Repositories
             return await _context.Pacientes.ToListAsync();
         }
 
-        public async Task AdicionarAsync(Paciente paciente)
+        public async Task CriarAsync(Paciente paciente)
         {
             await _context.Pacientes.AddAsync(paciente);
             await _context.SaveChangesAsync();
