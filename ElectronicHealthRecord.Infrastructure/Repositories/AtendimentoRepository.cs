@@ -1,5 +1,6 @@
 ﻿using ElectronicHealthRecord.Application.Interfaces;
 using ElectronicHealthRecord.Domain.Entidades;
+using ElectronicHealthRecord.Domain.Enums;
 using ElectronicHealthRecord.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -27,6 +28,17 @@ namespace ElectronicHealthRecord.Infrastructure.Repositories
         public async Task CriarAsync(Atendimento atendimento)
         {
             await _context.Atendimentos.AddAsync(atendimento);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<bool> ExisteConflitoHorarioAsync(Guid profissionalId, DateTime dataHora)
+        {
+            return await _context.Atendimentos.AnyAsync(a => a.ProfissionalId == profissionalId && a.DataHora == dataHora && a.Status != StatusAtendimento.Cancelado);
+        }
+
+        public async Task AtualizarAsync(Atendimento atendimento)
+        {
+            _context.Update(atendimento);
             await _context.SaveChangesAsync();
         }
     }
