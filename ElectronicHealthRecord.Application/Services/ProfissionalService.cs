@@ -27,6 +27,8 @@ namespace ElectronicHealthRecord.Application.Services
                 request.Especialidade
             );
 
+            await _profissionalRepository.CriarAsync(profissional);
+
             return new ProfissionalResponse(
                 profissional.Id,
                 profissional.Nome,
