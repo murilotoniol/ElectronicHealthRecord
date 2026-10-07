@@ -1,4 +1,6 @@
-﻿namespace ElectronicHealthRecord.Application.DTOs.RegistroClinico
+﻿using ElectronicHealthRecord.Application.DTOs.Prescricao;
+
+namespace ElectronicHealthRecord.Application.DTOs.RegistroClinico
 {
     public record RegistroClinicoResponse(
         Guid Id,
@@ -6,6 +8,7 @@
         string Queixa,
         string Diagnostico,
         string Observacoes,
-        DateTime CriadoEm
+        DateTime CriadoEm,
+        IEnumerable<PrescricaoResponse> Prescricoes
     );
 }
