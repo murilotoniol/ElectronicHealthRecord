@@ -16,7 +16,9 @@ namespace ElectronicHealthRecord.Infrastructure.Repositories
 
         public async Task<RegistroClinico?> ObterPorIdAsync(Guid id)
         {
-            return await _context.RegistrosClinicos.FindAsync(id);
+            return await _context.RegistrosClinicos
+                .Include(r => r.Prescricoes)
+                .FirstOrDefaultAsync(r => r.Id == id);
         }
 
         public async Task<IEnumerable<RegistroClinico>> ObterTodosAsync()
