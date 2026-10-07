@@ -1,3 +1,4 @@
+using ElectronicHealthRecord.Application.DTOs.Prescricao;
 using ElectronicHealthRecord.Application.DTOs.RegistroClinico;
 using ElectronicHealthRecord.Application.Interfaces;
 using ElectronicHealthRecord.Domain.Entidades;
@@ -29,7 +30,14 @@ namespace ElectronicHealthRecord.Application.Services
                 registroClinico.Queixa,
                 registroClinico.Diagnostico,
                 registroClinico.Observacoes,
-                registroClinico.CriadoEm
+                registroClinico.CriadoEm,
+                registroClinico.Prescricoes.Select(p => new PrescricaoResponse(
+                    p.Id,
+                    p.RegistroClinicoId,
+                    p.Medicamento,
+                    p.Dosagem,
+                    p.Instrucoes
+                ))
             );
         }
 
@@ -43,7 +51,14 @@ namespace ElectronicHealthRecord.Application.Services
                 p.Queixa,
                 p.Diagnostico,
                 p.Observacoes,
-                p.CriadoEm
+                p.CriadoEm,
+                p.Prescricoes.Select(p => new PrescricaoResponse(
+                    p.Id,
+                    p.RegistroClinicoId,
+                    p.Medicamento,
+                    p.Dosagem,
+                    p.Instrucoes
+                ))
             ));
         }
 
@@ -60,12 +75,18 @@ namespace ElectronicHealthRecord.Application.Services
                 throw new InvalidOperationException("Um registro clínico só pode ser criado para atendimentos com status 'Realizado'.");
             }
 
+            var prescricoes = request.Prescricoes?.Select(p => new Prescricao(
+                p.Medicamento,
+                p.Dosagem,
+                p.Instrucoes
+            ));
+
             var registroClinico = new RegistroClinico(
                 request.AtendimentoId,
                 request.Queixa,
                 request.Diagnostico,
-                request.Observacoes
-                //adicionar prescricoes no DTO request e aqui
+                request.Observacoes,
+                prescricoes
             );
 
             await _registroClinicoRepository.CriarAsync(registroClinico);
@@ -76,7 +97,14 @@ namespace ElectronicHealthRecord.Application.Services
                 registroClinico.Queixa,
                 registroClinico.Diagnostico,
                 registroClinico.Observacoes,
-                registroClinico.CriadoEm
+                registroClinico.CriadoEm,
+                registroClinico.Prescricoes.Select(p => new PrescricaoResponse(
+                    p.Id,
+                    p.RegistroClinicoId,
+                    p.Medicamento,
+                    p.Dosagem,
+                    p.Instrucoes
+                ))
             );
         }
     }
