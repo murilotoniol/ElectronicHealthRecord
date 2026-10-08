@@ -23,8 +23,9 @@ public class PacienteController : ControllerBase
         return Ok(pacientes);
     }
 
-    [HttpGet]
+    [HttpGet("{id:guid}")]
     [ProducesResponseType(typeof(PacienteResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<PacienteResponse>> ObterPorId(Guid id)
     {
         var paciente = await _pacienteService.ObterPorIdAsync(id);
@@ -33,7 +34,8 @@ public class PacienteController : ControllerBase
 
     [HttpPost]
     [ProducesResponseType(typeof(PacienteResponse), StatusCodes.Status201Created)]
-    public async Task<ActionResult<PacienteResponse>> Criar(CriarPacienteRequest request)
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<PacienteResponse>> Criar([FromBody] CriarPacienteRequest request)
     {
         var pacienteCriado = await _pacienteService.CriarAsync(request);
         return Ok(pacienteCriado);
