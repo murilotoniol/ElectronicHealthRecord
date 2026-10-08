@@ -31,7 +31,7 @@ namespace ElectronicHealthRecord.Api.Controllers
             try
             {
                 var atendimento = await _atendimentoService.ObterPorIdAsync(id);
-                return atendimento;
+                return Ok(atendimento);
             }
             catch (KeyNotFoundException ex)
             {
@@ -40,14 +40,18 @@ namespace ElectronicHealthRecord.Api.Controllers
         }
 
         [HttpPost]
-        [ProducesResponseType(typeof(AtendimentoResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(AtendimentoResponse), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<AtendimentoResponse>> Criar(CriarAtendimentoRequest request)
         {
             try
             {
-                var atendimento = await _atendimentoService.CriarAsync(request);
-                return atendimento;
+                var atendimentoNovo = await _atendimentoService.CriarAsync(request);
+                return CreatedAtAction(
+                    nameof(ObterPorId),
+                    new {id=atendimentoNovo.Id},
+                    atendimentoNovo
+                );
             }
             catch (InvalidOperationException ex)
             {
@@ -63,7 +67,7 @@ namespace ElectronicHealthRecord.Api.Controllers
             try
             {
                 var atendimento = await _atendimentoService.RealizarAsync(id);
-                return atendimento;
+                return Accepted(atendimento);
             }
             catch (KeyNotFoundException ex)
             {
@@ -79,13 +83,12 @@ namespace ElectronicHealthRecord.Api.Controllers
             try
             {
                 var atendimento = await _atendimentoService.CancelarAsync(id);
-                return atendimento;
+                return Accepted(atendimento);
             }
             catch (KeyNotFoundException ex)
             {
                 return NotFound(new { mensagem = ex.Message });
             }
         }
-
     }
 }
