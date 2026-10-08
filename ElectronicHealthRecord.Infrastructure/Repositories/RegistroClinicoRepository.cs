@@ -23,7 +23,9 @@ namespace ElectronicHealthRecord.Infrastructure.Repositories
 
         public async Task<IEnumerable<RegistroClinico>> ObterTodosAsync()
         {
-            return await _context.RegistrosClinicos.ToListAsync();
+            return await _context.RegistrosClinicos
+                .Include(r => r.Prescricoes)
+                .ToListAsync();
         }
 
         public async Task CriarAsync(RegistroClinico registroClinico)
