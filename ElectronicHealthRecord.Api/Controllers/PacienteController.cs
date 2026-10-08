@@ -46,8 +46,12 @@ public class PacienteController : ControllerBase
     {
         try
         {
-            var pacienteCriado = await _pacienteService.CriarAsync(request);
-            return Ok(pacienteCriado);
+            var novoPaciente = await _pacienteService.CriarAsync(request);
+            return CreatedAtAction(
+                nameof(ObterPorId),
+                new { id = novoPaciente.Id },
+                novoPaciente
+            );
         }
         catch (InvalidOperationException ex)
         {
