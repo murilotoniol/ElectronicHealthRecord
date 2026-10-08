@@ -23,7 +23,7 @@ namespace ElectronicHealthRecord.Api.Controllers
             return Ok(registrosClinicos);
         }
 
-        [HttpGet("id:guid")]
+        [HttpGet("{id:guid}")]
         [ProducesResponseType(typeof(RegistroClinicoResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<RegistroClinicoResponse>> ObterPorId(Guid id)

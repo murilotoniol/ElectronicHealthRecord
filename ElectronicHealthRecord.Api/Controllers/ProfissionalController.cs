@@ -24,7 +24,7 @@ namespace ElectronicHealthRecord.Api.Controllers
             return Ok(profissionais);
         }
 
-        [HttpGet("id:guid")]
+        [HttpGet("{id:guid}")]
         [ProducesResponseType(typeof(ProfissionalResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<ProfissionalResponse>> ObterPorId(Guid id)

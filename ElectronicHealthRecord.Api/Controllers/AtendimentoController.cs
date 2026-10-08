@@ -23,7 +23,7 @@ namespace ElectronicHealthRecord.Api.Controllers
             return Ok(atendimentos);
         }
 
-        [HttpGet("id:guid")]
+        [HttpGet("{id:guid}")]
         [ProducesResponseType(typeof(AtendimentoResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<AtendimentoResponse>> ObterPorId(Guid id)
@@ -59,7 +59,7 @@ namespace ElectronicHealthRecord.Api.Controllers
             }
         }
 
-        [HttpPut("id:guid/realizar")]
+        [HttpPut("{id:guid}/realizar")]
         [ProducesResponseType(typeof(AtendimentoResponse), StatusCodes.Status202Accepted)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<AtendimentoResponse>> Realizar(Guid id)
@@ -75,7 +75,7 @@ namespace ElectronicHealthRecord.Api.Controllers
             }
         }
 
-        [HttpPut("id:guid/cancelar")]
+        [HttpPut("{id:guid}/cancelar")]
         [ProducesResponseType(typeof(AtendimentoResponse), StatusCodes.Status202Accepted)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<AtendimentoResponse>> Cancelar(Guid id)
