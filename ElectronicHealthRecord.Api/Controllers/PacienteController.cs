@@ -28,8 +28,15 @@ public class PacienteController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<PacienteResponse>> ObterPorId(Guid id)
     {
-        var paciente = await _pacienteService.ObterPorIdAsync(id);
-        return Ok(paciente);
+        try
+        {
+            var paciente = await _pacienteService.ObterPorIdAsync(id);
+            return Ok(paciente);
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(new { mensagem = ex.Message });
+        }
     }
 
     [HttpPost]
@@ -37,7 +44,14 @@ public class PacienteController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<PacienteResponse>> Criar([FromBody] CriarPacienteRequest request)
     {
-        var pacienteCriado = await _pacienteService.CriarAsync(request);
-        return Ok(pacienteCriado);
+        try
+        {
+            var pacienteCriado = await _pacienteService.CriarAsync(request);
+            return Ok(pacienteCriado);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { mensagem =  ex.Message });
+        }
     }
 }
