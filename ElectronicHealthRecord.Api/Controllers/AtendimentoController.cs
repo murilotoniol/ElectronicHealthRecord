@@ -42,7 +42,7 @@ namespace ElectronicHealthRecord.Api.Controllers
         [HttpPost]
         [ProducesResponseType(typeof(AtendimentoResponse), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<AtendimentoResponse>> Criar(CriarAtendimentoRequest request)
+        public async Task<ActionResult<AtendimentoResponse>> Criar([FromBody] CriarAtendimentoRequest request)
         {
             try
             {
