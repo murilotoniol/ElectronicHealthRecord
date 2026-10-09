@@ -1,3 +1,4 @@
+using ElectronicHealthRecord.Application.DTOs.Comum;
 using ElectronicHealthRecord.Application.DTOs.Prescricao;
 using ElectronicHealthRecord.Application.DTOs.RegistroClinico;
 using ElectronicHealthRecord.Application.Interfaces;
@@ -9,11 +10,16 @@ namespace ElectronicHealthRecord.Application.Services
     {
         private readonly IRegistroClinicoRepository _registroClinicoRepository;
         private readonly IAtendimentoRepository _atendimentoRepository;
+        private readonly IPacienteRepository _pacienteRepository;
 
-        public RegistroClinicoService(IRegistroClinicoRepository registroClinicoRepository, IAtendimentoRepository atendimentoRepository)
+        public RegistroClinicoService(
+            IRegistroClinicoRepository registroClinicoRepository,
+            IAtendimentoRepository atendimentoRepository,
+            IPacienteRepository pacienteRepository)
         {
             _registroClinicoRepository = registroClinicoRepository;
             _atendimentoRepository = atendimentoRepository;
+            _pacienteRepository = pacienteRepository;
         }
 
         public async Task<RegistroClinicoResponse> ObterPorIdAsync(Guid id)
@@ -21,45 +27,16 @@ namespace ElectronicHealthRecord.Application.Services
             var registroClinico = await _registroClinicoRepository.ObterPorIdAsync(id);
             if (registroClinico == null)
             {
-                throw new KeyNotFoundException($"Não foi encontrado um Registro Clinico com o id {id}");
+                throw new KeyNotFoundException($"Não foi encontrado um Registro Clínico com o id {id}");
             }
 
-            return new RegistroClinicoResponse(
-                registroClinico.Id,
-                registroClinico.AtendimentoId,
-                registroClinico.Queixa,
-                registroClinico.Diagnostico,
-                registroClinico.Observacoes,
-                registroClinico.CriadoEm,
-                registroClinico.Prescricoes.Select(p => new PrescricaoResponse(
-                    p.Id,
-                    p.RegistroClinicoId,
-                    p.Medicamento,
-                    p.Dosagem,
-                    p.Instrucoes
-                ))
-            );
+            return MapearParaResponse(registroClinico);
         }
 
         public async Task<IEnumerable<RegistroClinicoResponse>> ObterTodosAsync()
         {
             var registrosClinicos = await _registroClinicoRepository.ObterTodosAsync();
-
-            return registrosClinicos.Select(p => new RegistroClinicoResponse(
-                p.Id,
-                p.AtendimentoId,
-                p.Queixa,
-                p.Diagnostico,
-                p.Observacoes,
-                p.CriadoEm,
-                p.Prescricoes.Select(p => new PrescricaoResponse(
-                    p.Id,
-                    p.RegistroClinicoId,
-                    p.Medicamento,
-                    p.Dosagem,
-                    p.Instrucoes
-                ))
-            ));
+            return registrosClinicos.Select(MapearParaResponse);
         }
 
         public async Task<RegistroClinicoResponse> CriarAsync(CriarRegistroClinicoRequest request)
@@ -73,6 +50,12 @@ namespace ElectronicHealthRecord.Application.Services
             if (atendimento.Status != Domain.Enums.StatusAtendimento.Realizado)
             {
                 throw new InvalidOperationException("Um registro clínico só pode ser criado para atendimentos com status 'Realizado'.");
+            }
+
+            var registroExistente = await _registroClinicoRepository.ObterPorAtendimentoIdAsync(request.AtendimentoId);
+            if (registroExistente != null)
+            {
+                throw new InvalidOperationException("Este atendimento já possui um registro clínico cadastrado.");
             }
 
             var prescricoes = request.Prescricoes?.Select(p => new Prescricao(
@@ -91,14 +74,46 @@ namespace ElectronicHealthRecord.Application.Services
 
             await _registroClinicoRepository.CriarAsync(registroClinico);
 
+            return MapearParaResponse(registroClinico);
+        }
+
+        public async Task<PaginacaoResponse<RegistroClinicoResponse>> ObterHistoricoPorPacienteAsync(
+            Guid pacienteId, PaginacaoRequest paginacao)
+        {
+            var paciente = await _pacienteRepository.ObterPorIdAsync(pacienteId);
+            if (paciente == null)
+            {
+                throw new KeyNotFoundException($"Paciente com ID {pacienteId} não encontrado.");
+            }
+
+            var pagina = paginacao.Pagina < 1 ? 1 : paginacao.Pagina;
+            var tamanhoPagina = paginacao.TamanhoPagina < 1 ? 10 : paginacao.TamanhoPagina;
+
+            var (itens, totalItens) = await _registroClinicoRepository.ObterHistoricoPorPacienteAsync(
+                pacienteId, pagina, tamanhoPagina);
+
+            var itensResponse = itens.Select(MapearParaResponse);
+
+            var totalPaginas = totalItens == 0 ? 0 : (int)Math.Ceiling((double)totalItens / tamanhoPagina);
+
+            return new PaginacaoResponse<RegistroClinicoResponse>(
+                itensResponse,
+                totalItens,
+                pagina,
+                totalPaginas
+            );
+        }
+
+        private static RegistroClinicoResponse MapearParaResponse(RegistroClinico registro)
+        {
             return new RegistroClinicoResponse(
-                registroClinico.Id,
-                registroClinico.AtendimentoId,
-                registroClinico.Queixa,
-                registroClinico.Diagnostico,
-                registroClinico.Observacoes,
-                registroClinico.CriadoEm,
-                registroClinico.Prescricoes.Select(p => new PrescricaoResponse(
+                registro.Id,
+                registro.AtendimentoId,
+                registro.Queixa,
+                registro.Diagnostico,
+                registro.Observacoes,
+                registro.CriadoEm,
+                registro.Prescricoes.Select(p => new PrescricaoResponse(
                     p.Id,
                     p.RegistroClinicoId,
                     p.Medicamento,
