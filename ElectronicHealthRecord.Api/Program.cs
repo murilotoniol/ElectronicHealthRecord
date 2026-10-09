@@ -1,3 +1,4 @@
+using Scalar.AspNetCore;
 using ElectronicHealthRecord.Application.Interfaces;
 using ElectronicHealthRecord.Application.Services;
 using ElectronicHealthRecord.Infrastructure.Data;
@@ -36,6 +37,7 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+    app.MapScalarApiReference();
 }
 
 app.UseHttpsRedirection();
