@@ -1,4 +1,6 @@
+using ElectronicHealthRecord.Application.DTOs.Comum;
 using ElectronicHealthRecord.Application.DTOs.Pacientes;
+using ElectronicHealthRecord.Application.DTOs.RegistroClinico;
 using ElectronicHealthRecord.Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,10 +11,14 @@ namespace ElectronicHealthRecord.Api.Controllers;
 public class PacienteController : ControllerBase
 {
     private readonly IPacienteService _pacienteService;
+    private readonly IRegistroClinicoService _registroClinicoService;
 
-    public PacienteController(IPacienteService pacienteService)
+    public PacienteController(
+        IPacienteService pacienteService,
+        IRegistroClinicoService registroClinicoService)
     {
         _pacienteService = pacienteService;
+        _registroClinicoService = registroClinicoService;
     }
 
     [HttpGet]
@@ -55,7 +61,27 @@ public class PacienteController : ControllerBase
         }
         catch (InvalidOperationException ex)
         {
-            return BadRequest(new { mensagem =  ex.Message });
+            return BadRequest(new { mensagem = ex.Message });
+        }
+    }
+
+    [HttpGet("{id:guid}/historico")]
+    [ProducesResponseType(typeof(PaginacaoResponse<RegistroClinicoResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<PaginacaoResponse<RegistroClinicoResponse>>> ObterHistorico(
+        Guid id,
+        [FromQuery] int pagina = 1,
+        [FromQuery] int tamanhoPagina = 10)
+    {
+        try
+        {
+            var request = new PaginacaoRequest(pagina, tamanhoPagina);
+            var historico = await _registroClinicoService.ObterHistoricoPorPacienteAsync(id, request);
+            return Ok(historico);
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(new { mensagem = ex.Message });
         }
     }
 }
