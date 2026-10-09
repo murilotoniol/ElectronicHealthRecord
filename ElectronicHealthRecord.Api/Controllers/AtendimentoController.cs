@@ -1,69 +1,94 @@
-using ElectronicHealthRecord.Application.DTOs.Atendimento;
+﻿using ElectronicHealthRecord.Application.DTOs.Atendimento;
 using ElectronicHealthRecord.Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
-namespace ElectronicHealthRecord.Api.Controllers;
-
-[ApiController]
-[Route("api/atendimentos")]
-public class AtendimentoController : ControllerBase
+namespace ElectronicHealthRecord.Api.Controllers
 {
-    private readonly IAtendimentoService _atendimentoService;
-
-    public AtendimentoController(IAtendimentoService atendimentoService)
+    [ApiController]
+    [Route("api/atendimentos")]
+    public class AtendimentoController : ControllerBase
     {
-        _atendimentoService = atendimentoService;
-    }
+        private readonly IAtendimentoService _atendimentoService;
 
-    [HttpGet]
-    [ProducesResponseType(typeof(IEnumerable<AtendimentoResponse>), StatusCodes.Status200OK)]
-    public async Task<ActionResult<IEnumerable<AtendimentoResponse>>> ObterTodos()
-    {
-        var atendimentos = await _atendimentoService.ObterTodosAsync();
-        return Ok(atendimentos);
-    }
+        public AtendimentoController(IAtendimentoService atendimentoService)
+        {
+            _atendimentoService = atendimentoService;
+        }
 
-    [HttpGet("{id:guid}")]
-    [ProducesResponseType(typeof(AtendimentoResponse), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<AtendimentoResponse>> ObterPorId(Guid id)
-    {
-        var atendimento = await _atendimentoService.ObterPorIdAsync(id);
-        return Ok(atendimento);
-    }
+        [HttpGet]
+        [ProducesResponseType(typeof(AtendimentoResponse), StatusCodes.Status200OK)]
+        public async Task<ActionResult<IEnumerable<AtendimentoResponse>>> ObterTodos()
+        {
+            var atendimentos = await _atendimentoService.ObterTodosAsync();
+            return Ok(atendimentos);
+        }
 
-    [HttpPost]
-    [ProducesResponseType(typeof(AtendimentoResponse), StatusCodes.Status201Created)]
-    [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
-    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status409Conflict)]
-    public async Task<ActionResult<AtendimentoResponse>> Criar([FromBody] CriarAtendimentoRequest request)
-    {
-        var atendimentoNovo = await _atendimentoService.CriarAsync(request);
-        return CreatedAtAction(
-            nameof(ObterPorId),
-            new { id = atendimentoNovo.Id },
-            atendimentoNovo
-        );
-    }
+        [HttpGet("{id:guid}")]
+        [ProducesResponseType(typeof(AtendimentoResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<AtendimentoResponse>> ObterPorId(Guid id)
+        {
+            try
+            {
+                var atendimento = await _atendimentoService.ObterPorIdAsync(id);
+                return Ok(atendimento);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { mensagem = ex.Message });
+            }
+        }
 
-    [HttpPut("{id:guid}/realizar")]
-    [ProducesResponseType(typeof(AtendimentoResponse), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
-    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status422UnprocessableEntity)]
-    public async Task<ActionResult<AtendimentoResponse>> Realizar(Guid id)
-    {
-        var atendimento = await _atendimentoService.RealizarAsync(id);
-        return Ok(atendimento);
-    }
+        [HttpPost]
+        [ProducesResponseType(typeof(AtendimentoResponse), StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<AtendimentoResponse>> Criar([FromBody] CriarAtendimentoRequest request)
+        {
+            try
+            {
+                var atendimentoNovo = await _atendimentoService.CriarAsync(request);
+                return CreatedAtAction(
+                    nameof(ObterPorId),
+                    new {id=atendimentoNovo.Id},
+                    atendimentoNovo
+                );
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { mensagem = ex.Message });
+            }
+        }
 
-    [HttpPut("{id:guid}/cancelar")]
-    [ProducesResponseType(typeof(AtendimentoResponse), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
-    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status422UnprocessableEntity)]
-    public async Task<ActionResult<AtendimentoResponse>> Cancelar(Guid id)
-    {
-        var atendimento = await _atendimentoService.CancelarAsync(id);
-        return Ok(atendimento);
+        [HttpPut("{id:guid}/realizar")]
+        [ProducesResponseType(typeof(AtendimentoResponse), StatusCodes.Status202Accepted)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<AtendimentoResponse>> Realizar(Guid id)
+        {
+            try
+            {
+                var atendimento = await _atendimentoService.RealizarAsync(id);
+                return Accepted(atendimento);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { mensagem = ex.Message });
+            }
+        }
+
+        [HttpPut("{id:guid}/cancelar")]
+        [ProducesResponseType(typeof(AtendimentoResponse), StatusCodes.Status202Accepted)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<AtendimentoResponse>> Cancelar(Guid id)
+        {
+            try
+            {
+                var atendimento = await _atendimentoService.CancelarAsync(id);
+                return Accepted(atendimento);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { mensagem = ex.Message });
+            }
+        }
     }
 }

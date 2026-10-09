@@ -1,50 +1,62 @@
-using ElectronicHealthRecord.Application.DTOs.RegistroClinico;
+﻿using ElectronicHealthRecord.Application.DTOs.RegistroClinico;
 using ElectronicHealthRecord.Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
-namespace ElectronicHealthRecord.Api.Controllers;
-
-[ApiController]
-[Route("api/registrosclinicos")]
-public class RegistroClinicoController : ControllerBase
+namespace ElectronicHealthRecord.Api.Controllers
 {
-    private readonly IRegistroClinicoService _registroClinicoService;
-
-    public RegistroClinicoController(IRegistroClinicoService registroClinicoService)
+    [ApiController]
+    [Route("api/registrosclinicos")]
+    public class RegistroClinicoController : ControllerBase
     {
-        _registroClinicoService = registroClinicoService;
-    }
+        private readonly IRegistroClinicoService _registroClinicoService;
 
-    [HttpGet]
-    [ProducesResponseType(typeof(IEnumerable<RegistroClinicoResponse>), StatusCodes.Status200OK)]
-    public async Task<ActionResult<IEnumerable<RegistroClinicoResponse>>> ObterTodos()
-    {
-        var registrosClinicos = await _registroClinicoService.ObterTodosAsync();
-        return Ok(registrosClinicos);
-    }
+        public RegistroClinicoController(IRegistroClinicoService registroClinicoService)
+        {
+            _registroClinicoService = registroClinicoService;
+        }
 
-    [HttpGet("{id:guid}")]
-    [ProducesResponseType(typeof(RegistroClinicoResponse), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<RegistroClinicoResponse>> ObterPorId(Guid id)
-    {
-        var registroClinico = await _registroClinicoService.ObterPorIdAsync(id);
-        return Ok(registroClinico);
-    }
+        [HttpGet]
+        [ProducesResponseType(typeof(RegistroClinicoResponse), StatusCodes.Status200OK)]
+        public async Task<ActionResult<IEnumerable<RegistroClinicoResponse>>> ObterTodos()
+        {
+            var registrosClinicos = await _registroClinicoService.ObterTodosAsync();
+            return Ok(registrosClinicos);
+        }
 
-    [HttpPost]
-    [ProducesResponseType(typeof(RegistroClinicoResponse), StatusCodes.Status201Created)]
-    [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
-    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status409Conflict)]
-    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status422UnprocessableEntity)]
-    public async Task<ActionResult<RegistroClinicoResponse>> Criar([FromBody] CriarRegistroClinicoRequest request)
-    {
-        var novoRegistroClinico = await _registroClinicoService.CriarAsync(request);
-        return CreatedAtAction(
-            nameof(ObterPorId),
-            new { id = novoRegistroClinico.Id },
-            novoRegistroClinico
-        );
+        [HttpGet("{id:guid}")]
+        [ProducesResponseType(typeof(RegistroClinicoResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<RegistroClinicoResponse>> ObterPorId(Guid id)
+        {
+            try
+            {
+                var registroClinico = await _registroClinicoService.ObterPorIdAsync(id);
+                return Ok(registroClinico);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { mensagem = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [ProducesResponseType(typeof(RegistroClinicoResponse), StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<RegistroClinicoResponse>> Criar([FromBody] CriarRegistroClinicoRequest request)
+        {
+            try
+            {
+                var novoRegistroClinico = await _registroClinicoService.CriarAsync(request);
+                return CreatedAtAction(
+                    nameof(ObterPorId),
+                    new { id = novoRegistroClinico.Id },
+                    novoRegistroClinico
+                );
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { mensagem = ex.Message });
+            }
+        }
     }
 }
