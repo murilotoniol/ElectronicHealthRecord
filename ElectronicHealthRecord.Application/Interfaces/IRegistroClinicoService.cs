@@ -1,4 +1,5 @@
-﻿using ElectronicHealthRecord.Application.DTOs.RegistroClinico;
+using ElectronicHealthRecord.Application.DTOs.Comum;
+using ElectronicHealthRecord.Application.DTOs.RegistroClinico;
 
 namespace ElectronicHealthRecord.Application.Interfaces
 {
@@ -7,5 +8,6 @@ namespace ElectronicHealthRecord.Application.Interfaces
         Task<RegistroClinicoResponse> ObterPorIdAsync(Guid id);
         Task<IEnumerable<RegistroClinicoResponse>> ObterTodosAsync();
         Task<RegistroClinicoResponse> CriarAsync(CriarRegistroClinicoRequest request);
+        Task<PaginacaoResponse<RegistroClinicoResponse>> ObterHistoricoPorPacienteAsync(Guid pacienteId, PaginacaoRequest paginacao);
     }
 }
