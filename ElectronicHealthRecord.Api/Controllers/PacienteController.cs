@@ -31,57 +31,37 @@ public class PacienteController : ControllerBase
 
     [HttpGet("{id:guid}")]
     [ProducesResponseType(typeof(PacienteResponse), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
     public async Task<ActionResult<PacienteResponse>> ObterPorId(Guid id)
     {
-        try
-        {
-            var paciente = await _pacienteService.ObterPorIdAsync(id);
-            return Ok(paciente);
-        }
-        catch (KeyNotFoundException ex)
-        {
-            return NotFound(new { mensagem = ex.Message });
-        }
+        var paciente = await _pacienteService.ObterPorIdAsync(id);
+        return Ok(paciente);
     }
 
     [HttpPost]
     [ProducesResponseType(typeof(PacienteResponse), StatusCodes.Status201Created)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status409Conflict)]
     public async Task<ActionResult<PacienteResponse>> Criar([FromBody] CriarPacienteRequest request)
     {
-        try
-        {
-            var novoPaciente = await _pacienteService.CriarAsync(request);
-            return CreatedAtAction(
-                nameof(ObterPorId),
-                new { id = novoPaciente.Id },
-                novoPaciente
-            );
-        }
-        catch (InvalidOperationException ex)
-        {
-            return BadRequest(new { mensagem = ex.Message });
-        }
+        var novoPaciente = await _pacienteService.CriarAsync(request);
+        return CreatedAtAction(
+            nameof(ObterPorId),
+            new { id = novoPaciente.Id },
+            novoPaciente
+        );
     }
 
     [HttpGet("{id:guid}/historico")]
     [ProducesResponseType(typeof(PaginacaoResponse<RegistroClinicoResponse>), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
     public async Task<ActionResult<PaginacaoResponse<RegistroClinicoResponse>>> ObterHistorico(
         Guid id,
         [FromQuery] int pagina = 1,
         [FromQuery] int tamanhoPagina = 10)
     {
-        try
-        {
-            var request = new PaginacaoRequest(pagina, tamanhoPagina);
-            var historico = await _registroClinicoService.ObterHistoricoPorPacienteAsync(id, request);
-            return Ok(historico);
-        }
-        catch (KeyNotFoundException ex)
-        {
-            return NotFound(new { mensagem = ex.Message });
-        }
+        var request = new PaginacaoRequest(pagina, tamanhoPagina);
+        var historico = await _registroClinicoService.ObterHistoricoPorPacienteAsync(id, request);
+        return Ok(historico);
     }
 }
