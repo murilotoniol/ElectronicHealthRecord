@@ -1,4 +1,4 @@
-﻿using ElectronicHealthRecord.Application.Interfaces;
+using ElectronicHealthRecord.Application.Interfaces;
 using ElectronicHealthRecord.Domain.Entidades;
 using ElectronicHealthRecord.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
@@ -21,6 +21,13 @@ namespace ElectronicHealthRecord.Infrastructure.Repositories
                 .FirstOrDefaultAsync(r => r.Id == id);
         }
 
+        public async Task<RegistroClinico?> ObterPorAtendimentoIdAsync(Guid atendimentoId)
+        {
+            return await _context.RegistrosClinicos
+                .Include(r => r.Prescricoes)
+                .FirstOrDefaultAsync(r => r.AtendimentoId == atendimentoId);
+        }
+
         public async Task<IEnumerable<RegistroClinico>> ObterTodosAsync()
         {
             return await _context.RegistrosClinicos
@@ -32,6 +39,25 @@ namespace ElectronicHealthRecord.Infrastructure.Repositories
         {
             await _context.RegistrosClinicos.AddAsync(registroClinico);
             await _context.SaveChangesAsync();
+        }
+
+        public async Task<(IEnumerable<RegistroClinico> Itens, int TotalItens)> ObterHistoricoPorPacienteAsync(
+            Guid pacienteId, int pagina, int tamanhoPagina)
+        {
+            var query = _context.RegistrosClinicos
+                .Include(r => r.Prescricoes)
+                .Include(r => r.Atendimento)
+                .Where(r => r.Atendimento != null && r.Atendimento.PacienteId == pacienteId)
+                .OrderByDescending(r => r.CriadoEm);
+
+            var totalItens = await query.CountAsync();
+
+            var itens = await query
+                .Skip((pagina - 1) * tamanhoPagina)
+                .Take(tamanhoPagina)
+                .ToListAsync();
+
+            return (itens, totalItens);
         }
     }
 }
