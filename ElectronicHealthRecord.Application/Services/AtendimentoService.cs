@@ -1,5 +1,6 @@
-Ôªøusing ElectronicHealthRecord.Application.DTOs.Atendimento;
+using ElectronicHealthRecord.Application.DTOs.Atendimento;
 using ElectronicHealthRecord.Application.Interfaces;
+using ElectronicHealthRecord.Domain.Exceptions;
 using ElectronicHealthRecord.Domain.Entidades;
 
 namespace ElectronicHealthRecord.Application.Services
@@ -23,7 +24,7 @@ namespace ElectronicHealthRecord.Application.Services
 
             if (atendimento == null)
             {
-                throw new KeyNotFoundException($"Atendimento com ID {id} n√£o encontrado.");
+                throw new NotFoundException($"Atendimento com ID {id} n„o encontrado.");
             }
 
             return new AtendimentoResponse(
@@ -54,21 +55,21 @@ namespace ElectronicHealthRecord.Application.Services
 
             if (paciente == null)
             {
-                throw new KeyNotFoundException($"Paciente com ID {request.PacienteId} n√£o encontrado.");
+                throw new NotFoundException($"Paciente com ID {request.PacienteId} n„o encontrado.");
             }
 
             var profissional = await _profissionalRepository.ObterPorIdAsync(request.ProfissionalId);
 
             if (profissional == null)
             {
-                throw new KeyNotFoundException($"Profissional com ID {request.ProfissionalId} n√£o encontrado.");
+                throw new NotFoundException($"Profissional com ID {request.ProfissionalId} n„o encontrado.");
             }
 
             var atendimentoExistente = await _atendimentoRepository.ExisteConflitoHorarioAsync(request.ProfissionalId, request.DataHora);
 
             if (atendimentoExistente)
             {
-                throw new InvalidOperationException("J√° existe um atendimento marcado para este profissional no mesmo hor√°rio.");
+                throw new ConflictException("J· existe um atendimento marcado para este profissional no mesmo hor·rio.");
             }
 
             var atendimento = new Atendimento(
@@ -94,7 +95,7 @@ namespace ElectronicHealthRecord.Application.Services
 
             if (atendimento == null)
             {
-                throw new KeyNotFoundException($"Atendimento com ID {id} n√£o encontrado.");
+                throw new NotFoundException($"Atendimento com ID {id} n„o encontrado.");
             }
 
             atendimento.Realizar();
@@ -116,7 +117,7 @@ namespace ElectronicHealthRecord.Application.Services
 
             if (atendimento == null)
             {
-                throw new KeyNotFoundException($"Atendimento com ID {id} n√£o encontrado.");
+                throw new NotFoundException($"Atendimento com ID {id} n„o encontrado.");
             }
 
             atendimento.Cancelar();

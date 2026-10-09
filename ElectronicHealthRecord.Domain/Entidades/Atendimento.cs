@@ -1,3 +1,4 @@
+using ElectronicHealthRecord.Domain.Exceptions;
 using ElectronicHealthRecord.Domain.Enums;
 
 namespace ElectronicHealthRecord.Domain.Entidades;
@@ -28,7 +29,7 @@ public class Atendimento
     {
         if (Status != StatusAtendimento.Agendado)
         {
-            throw new InvalidOperationException($"Não é possível realizar um atendimento com status '{Status}'. Somente atendimentos agendados podem ser realizados.");
+            throw new BusinessRuleException($"Não é possível realizar um atendimento com status '{Status}'. Somente atendimentos agendados podem ser realizados.");
         }
 
         Status = StatusAtendimento.Realizado;
@@ -38,7 +39,7 @@ public class Atendimento
     {
         if (Status != StatusAtendimento.Agendado)
         {
-            throw new InvalidOperationException($"Não é possível cancelar um atendimento com status '{Status}'. Somente atendimentos agendados podem ser cancelados.");
+            throw new BusinessRuleException($"Não é possível cancelar um atendimento com status '{Status}'. Somente atendimentos agendados podem ser cancelados.");
         }
 
         Status = StatusAtendimento.Cancelado;

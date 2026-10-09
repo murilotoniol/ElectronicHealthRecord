@@ -1,5 +1,6 @@
-Ôªøusing ElectronicHealthRecord.Application.DTOs.Pacientes;
+using ElectronicHealthRecord.Application.DTOs.Pacientes;
 using ElectronicHealthRecord.Application.Interfaces;
+using ElectronicHealthRecord.Domain.Exceptions;
 using ElectronicHealthRecord.Domain.Entidades;
 
 namespace ElectronicHealthRecord.Application.Services
@@ -18,7 +19,7 @@ namespace ElectronicHealthRecord.Application.Services
             var pacienteExistente = await _pacienteRepository.ObterPorCpfAsync(request.Cpf);
             if (pacienteExistente != null)
             {
-                throw new InvalidOperationException("J√° existe um paciente cadastrado com este CPF.");
+                throw new ConflictException("J· existe um paciente cadastrado com este CPF.");
             }
 
             var paciente = new Paciente(
@@ -44,7 +45,7 @@ namespace ElectronicHealthRecord.Application.Services
             var paciente = await _pacienteRepository.ObterPorIdAsync(id);
             if (paciente == null)
             {
-                throw new KeyNotFoundException("Paciente n√£o encontrado.");
+                throw new NotFoundException("Paciente n„o encontrado.");
             }
 
             return new PacienteResponse(

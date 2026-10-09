@@ -1,5 +1,6 @@
-Ôªøusing ElectronicHealthRecord.Application.DTOs.Profissional;
+using ElectronicHealthRecord.Application.DTOs.Profissional;
 using ElectronicHealthRecord.Application.Interfaces;
+using ElectronicHealthRecord.Domain.Exceptions;
 using ElectronicHealthRecord.Domain.Entidades;
 
 namespace ElectronicHealthRecord.Application.Services
@@ -18,7 +19,7 @@ namespace ElectronicHealthRecord.Application.Services
             var profissionalExistente = await _profissionalRepository.ObterPorCrmAsync(request.RegistroCrm);
             if (profissionalExistente != null)
             {
-                throw new InvalidOperationException("J√° existe um profissional com o mesmo registro CRM.");
+                throw new ConflictException("J· existe um profissional com o mesmo registro CRM.");
             }
 
             var profissional = new Profissional(
@@ -42,7 +43,7 @@ namespace ElectronicHealthRecord.Application.Services
             var profissional = await _profissionalRepository.ObterPorIdAsync(id);
             if (profissional == null)
             {
-                throw new KeyNotFoundException("Profissional n√£o encontrado.");
+                throw new NotFoundException("Profissional n„o encontrado.");
             }
 
             return new ProfissionalResponse(

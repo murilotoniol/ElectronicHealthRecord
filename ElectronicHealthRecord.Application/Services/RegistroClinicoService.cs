@@ -2,6 +2,7 @@ using ElectronicHealthRecord.Application.DTOs.Comum;
 using ElectronicHealthRecord.Application.DTOs.Prescricao;
 using ElectronicHealthRecord.Application.DTOs.RegistroClinico;
 using ElectronicHealthRecord.Application.Interfaces;
+using ElectronicHealthRecord.Domain.Exceptions;
 using ElectronicHealthRecord.Domain.Entidades;
 
 namespace ElectronicHealthRecord.Application.Services
@@ -27,7 +28,7 @@ namespace ElectronicHealthRecord.Application.Services
             var registroClinico = await _registroClinicoRepository.ObterPorIdAsync(id);
             if (registroClinico == null)
             {
-                throw new KeyNotFoundException($"Não foi encontrado um Registro Clínico com o id {id}");
+                throw new NotFoundException($"Não foi encontrado um Registro Clínico com o id {id}");
             }
 
             return MapearParaResponse(registroClinico);
@@ -44,18 +45,18 @@ namespace ElectronicHealthRecord.Application.Services
             var atendimento = await _atendimentoRepository.ObterPorIdAsync(request.AtendimentoId);
             if (atendimento == null)
             {
-                throw new KeyNotFoundException($"Atendimento com ID {request.AtendimentoId} não encontrado.");
+                throw new NotFoundException($"Atendimento com ID {request.AtendimentoId} não encontrado.");
             }
 
             if (atendimento.Status != Domain.Enums.StatusAtendimento.Realizado)
             {
-                throw new InvalidOperationException("Um registro clínico só pode ser criado para atendimentos com status 'Realizado'.");
+                throw new BusinessRuleException("Um registro clínico só pode ser criado para atendimentos com status 'Realizado'.");
             }
 
             var registroExistente = await _registroClinicoRepository.ObterPorAtendimentoIdAsync(request.AtendimentoId);
             if (registroExistente != null)
             {
-                throw new InvalidOperationException("Este atendimento já possui um registro clínico cadastrado.");
+                throw new ConflictException("Este atendimento já possui um registro clínico cadastrado.");
             }
 
             var prescricoes = request.Prescricoes?.Select(p => new Prescricao(
@@ -83,7 +84,7 @@ namespace ElectronicHealthRecord.Application.Services
             var paciente = await _pacienteRepository.ObterPorIdAsync(pacienteId);
             if (paciente == null)
             {
-                throw new KeyNotFoundException($"Paciente com ID {pacienteId} não encontrado.");
+                throw new NotFoundException($"Paciente com ID {pacienteId} não encontrado.");
             }
 
             var pagina = paginacao.Pagina < 1 ? 1 : paginacao.Pagina;

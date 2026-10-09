@@ -1,5 +1,6 @@
-Ôªøusing ElectronicHealthRecord.Application.DTOs.Prescricao;
+using ElectronicHealthRecord.Application.DTOs.Prescricao;
 using ElectronicHealthRecord.Application.Interfaces;
+using ElectronicHealthRecord.Domain.Exceptions;
 using ElectronicHealthRecord.Domain.Entidades;
 
 namespace ElectronicHealthRecord.Application.Services
@@ -19,7 +20,7 @@ namespace ElectronicHealthRecord.Application.Services
 
             if (prescricao == null)
             {
-                throw new KeyNotFoundException("Instru√ß√£o n√£o encontrada");
+                throw new NotFoundException("InstruÁ„o n„o encontrada");
             }
 
             return new PrescricaoResponse(
