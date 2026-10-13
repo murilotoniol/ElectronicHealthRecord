@@ -39,6 +39,11 @@ public class GlobalExceptionHandler : IExceptionHandler
                 "Recurso não encontrado",
                 ex.Message
             ),
+            CredenciaisInvalidasException ex => (
+                StatusCodes.Status401Unauthorized,
+                "Não autorizado",
+                ex.Message
+            ),
             ConflictException ex => (
                 StatusCodes.Status409Conflict,
                 "Conflito",
