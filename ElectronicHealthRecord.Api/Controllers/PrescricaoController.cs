@@ -1,11 +1,13 @@
 ﻿using ElectronicHealthRecord.Application.DTOs.Prescricao;
 using ElectronicHealthRecord.Application.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ElectronicHealthRecord.Api.Controllers
 {
     [ApiController]
     [Route("api/prescricoes")]
+    [Authorize(Roles = "Medico")]
     public class PrescricaoController : ControllerBase
     {
         private readonly IPrescricaoService _prescricaoService;

@@ -1,11 +1,13 @@
 ﻿using ElectronicHealthRecord.Application.DTOs.Atendimento;
 using ElectronicHealthRecord.Application.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ElectronicHealthRecord.Api.Controllers
 {
     [ApiController]
     [Route("api/atendimentos")]
+    [Authorize]
     public class AtendimentoController : ControllerBase
     {
         private readonly IAtendimentoService _atendimentoService;
@@ -42,6 +44,7 @@ namespace ElectronicHealthRecord.Api.Controllers
         [HttpPost]
         [ProducesResponseType(typeof(AtendimentoResponse), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [Authorize(Roles = "Recepcionista,Medico")]
         public async Task<ActionResult<AtendimentoResponse>> Criar([FromBody] CriarAtendimentoRequest request)
         {
             try
@@ -62,6 +65,7 @@ namespace ElectronicHealthRecord.Api.Controllers
         [HttpPut("{id:guid}/realizar")]
         [ProducesResponseType(typeof(AtendimentoResponse), StatusCodes.Status202Accepted)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [Authorize(Roles = "Medico")]
         public async Task<ActionResult<AtendimentoResponse>> Realizar(Guid id)
         {
             try
@@ -78,6 +82,7 @@ namespace ElectronicHealthRecord.Api.Controllers
         [HttpPut("{id:guid}/cancelar")]
         [ProducesResponseType(typeof(AtendimentoResponse), StatusCodes.Status202Accepted)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [Authorize(Roles = "Recepcionista,Medico")]
         public async Task<ActionResult<AtendimentoResponse>> Cancelar(Guid id)
         {
             try

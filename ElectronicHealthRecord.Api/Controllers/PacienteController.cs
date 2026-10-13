@@ -2,12 +2,14 @@ using ElectronicHealthRecord.Application.DTOs.Comum;
 using ElectronicHealthRecord.Application.DTOs.Pacientes;
 using ElectronicHealthRecord.Application.DTOs.RegistroClinico;
 using ElectronicHealthRecord.Application.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ElectronicHealthRecord.Api.Controllers;
 
 [ApiController]
 [Route("api/pacientes")]
+[Authorize]
 public class PacienteController : ControllerBase
 {
     private readonly IPacienteService _pacienteService;

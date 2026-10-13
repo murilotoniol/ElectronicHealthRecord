@@ -1,5 +1,6 @@
 ﻿using ElectronicHealthRecord.Application.DTOs.Profissional;
 using ElectronicHealthRecord.Application.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Formats.Asn1;
 
@@ -7,6 +8,7 @@ namespace ElectronicHealthRecord.Api.Controllers
 {
     [ApiController]
     [Route("api/profissionais")]
+    [Authorize]
     public class ProfissionalController : ControllerBase
     {
         private readonly IProfissionalService _profissionalService;

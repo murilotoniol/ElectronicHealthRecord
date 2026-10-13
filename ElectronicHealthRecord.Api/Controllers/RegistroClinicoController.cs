@@ -1,11 +1,13 @@
 ﻿using ElectronicHealthRecord.Application.DTOs.RegistroClinico;
 using ElectronicHealthRecord.Application.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ElectronicHealthRecord.Api.Controllers
 {
     [ApiController]
     [Route("api/registrosclinicos")]
+    [Authorize(Roles = "Medico")]
     public class RegistroClinicoController : ControllerBase
     {
         private readonly IRegistroClinicoService _registroClinicoService;
