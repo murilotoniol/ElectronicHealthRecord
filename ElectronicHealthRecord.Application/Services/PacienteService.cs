@@ -19,7 +19,7 @@ namespace ElectronicHealthRecord.Application.Services
             var pacienteExistente = await _pacienteRepository.ObterPorCpfAsync(request.Cpf);
             if (pacienteExistente != null)
             {
-                throw new ConflictException("J· existe um paciente cadastrado com este CPF.");
+                throw new ConflictException("J√° existe um paciente cadastrado com este CPF.");
             }
 
             var paciente = new Paciente(
@@ -27,7 +27,7 @@ namespace ElectronicHealthRecord.Application.Services
                 request.Cpf,
                 request.DataNascimento,
                 request.Telefone
-                );
+            );
 
             await _pacienteRepository.CriarAsync(paciente);
 
@@ -45,7 +45,7 @@ namespace ElectronicHealthRecord.Application.Services
             var paciente = await _pacienteRepository.ObterPorIdAsync(id);
             if (paciente == null)
             {
-                throw new NotFoundException("Paciente n„o encontrado.");
+                throw new NotFoundException("Paciente n√£o encontrado.");
             }
 
             return new PacienteResponse(

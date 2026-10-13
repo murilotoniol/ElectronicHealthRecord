@@ -11,7 +11,10 @@ namespace ElectronicHealthRecord.Application.Services
         private readonly IPacienteRepository _pacienteRepository;
         private readonly IProfissionalRepository _profissionalRepository;
 
-        public AtendimentoService(IAtendimentoRepository atendimentoRepository, IPacienteRepository pacienteRepository, IProfissionalRepository profissionalRepository)
+        public AtendimentoService(
+            IAtendimentoRepository atendimentoRepository,
+            IPacienteRepository pacienteRepository,
+            IProfissionalRepository profissionalRepository)
         {
             _atendimentoRepository = atendimentoRepository;
             _pacienteRepository = pacienteRepository;
@@ -24,7 +27,7 @@ namespace ElectronicHealthRecord.Application.Services
 
             if (atendimento == null)
             {
-                throw new NotFoundException($"Atendimento com ID {id} n„o encontrado.");
+                throw new NotFoundException($"Atendimento com ID {id} n√£o encontrado.");
             }
 
             return new AtendimentoResponse(
@@ -55,21 +58,21 @@ namespace ElectronicHealthRecord.Application.Services
 
             if (paciente == null)
             {
-                throw new NotFoundException($"Paciente com ID {request.PacienteId} n„o encontrado.");
+                throw new NotFoundException($"Paciente com ID {request.PacienteId} n√£o encontrado.");
             }
 
             var profissional = await _profissionalRepository.ObterPorIdAsync(request.ProfissionalId);
 
             if (profissional == null)
             {
-                throw new NotFoundException($"Profissional com ID {request.ProfissionalId} n„o encontrado.");
+                throw new NotFoundException($"Profissional com ID {request.ProfissionalId} n√£o encontrado.");
             }
 
             var atendimentoExistente = await _atendimentoRepository.ExisteConflitoHorarioAsync(request.ProfissionalId, request.DataHora);
 
             if (atendimentoExistente)
             {
-                throw new ConflictException("J· existe um atendimento marcado para este profissional no mesmo hor·rio.");
+                throw new ConflictException("J√° existe um atendimento marcado para este profissional no mesmo hor√°rio.");
             }
 
             var atendimento = new Atendimento(
@@ -95,7 +98,7 @@ namespace ElectronicHealthRecord.Application.Services
 
             if (atendimento == null)
             {
-                throw new NotFoundException($"Atendimento com ID {id} n„o encontrado.");
+                throw new NotFoundException($"Atendimento com ID {id} n√£o encontrado.");
             }
 
             atendimento.Realizar();
@@ -117,7 +120,7 @@ namespace ElectronicHealthRecord.Application.Services
 
             if (atendimento == null)
             {
-                throw new NotFoundException($"Atendimento com ID {id} n„o encontrado.");
+                throw new NotFoundException($"Atendimento com ID {id} n√£o encontrado.");
             }
 
             atendimento.Cancelar();
