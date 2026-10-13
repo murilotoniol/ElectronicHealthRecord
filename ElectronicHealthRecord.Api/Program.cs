@@ -1,4 +1,5 @@
 using ElectronicHealthRecord.Api.ExceptionHandlers;
+using ElectronicHealthRecord.Api.OpenApi;
 using ElectronicHealthRecord.Application.Interfaces;
 using ElectronicHealthRecord.Application.Services;
 using ElectronicHealthRecord.Infrastructure.Data;
@@ -19,7 +20,11 @@ builder.Services.AddControllers();
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddProblemDetails();
 
-builder.Services.AddOpenApi();
+builder.Services.AddOpenApi(options =>
+{
+    options.AddDocumentTransformer<BearerSecuritySchemeTransformer>();
+    options.AddOperationTransformer<BearerOperationTransformer>();
+});
 builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlite(connectionString));
 
 builder.Services.AddScoped<IPacienteRepository, PacienteRepository>();
