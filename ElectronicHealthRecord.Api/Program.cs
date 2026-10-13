@@ -27,6 +27,9 @@ builder.Services.AddOpenApi(options =>
 });
 builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlite(connectionString));
 
+builder.Services.AddHealthChecks()
+    .AddDbContextCheck<AppDbContext>(name: "database");
+
 builder.Services.AddScoped<IPacienteRepository, PacienteRepository>();
 builder.Services.AddScoped<IPacienteService, PacienteService>();
 
@@ -51,9 +54,9 @@ var chaveSecreta = builder.Configuration["Jwt:ChaveSecreta"];
 if (string.IsNullOrWhiteSpace(chaveSecreta) || Encoding.UTF8.GetByteCount(chaveSecreta) < 32)
 {
     throw new InvalidOperationException(
-        "A chave JWT (Jwt:ChaveSecreta) nao esta configurada ou tem menos de 32 bytes. " +
+        "A chave JWT (Jwt:ChaveSecreta) não esta configurada ou tem menos de 32 bytes. " +
         "Em desenvolvimento use: dotnet user-secrets set \"Jwt:ChaveSecreta\" \"<chave>\" --project ElectronicHealthRecord.Api. " +
-        "Em Docker/producao use a variavel de ambiente Jwt__ChaveSecreta.");
+        "Em Docker/produção use a variável de ambiente Jwt__ChaveSecreta.");
 }
 var key = Encoding.UTF8.GetBytes(chaveSecreta);
 builder.Services.AddAuthentication(options =>
@@ -101,5 +104,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapHealthChecks("/health").AllowAnonymous();
 
 app.Run();
