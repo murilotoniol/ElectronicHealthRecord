@@ -1,4 +1,4 @@
-﻿using ElectronicHealthRecord.Domain.Entidades;
+using ElectronicHealthRecord.Domain.Entidades;
 using Microsoft.EntityFrameworkCore;
 
 namespace ElectronicHealthRecord.Infrastructure.Data
@@ -12,6 +12,7 @@ namespace ElectronicHealthRecord.Infrastructure.Data
         public DbSet<Prescricao> Prescricoes => Set<Prescricao>();
         public DbSet<Profissional> Profissionais => Set<Profissional>();
         public DbSet<RegistroClinico> RegistrosClinicos => Set<RegistroClinico>();
+        public DbSet<Usuario> Usuarios => Set<Usuario>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
