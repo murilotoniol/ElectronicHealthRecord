@@ -1,16 +1,19 @@
 services:
-  postgres:
-    image: postgres:16-alpine
-    container_name: prontuario_postgres
-    restart: always
-    environment:
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: adminpassword
-      POSTGRES_DB: prontuario_db
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: prontuario_api
+    restart: unless-stopped
     ports:
-      - "5432:5432"
+      - "5000:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - Jwt__ChaveSecreta=lh2W0vYHf669sZprSRuOgRuHLUuYESZCHPYgxGm3civpZ2FjeHKzA69DoPSJAoyX
+      - ConnectionStrings__DefaultConnection=Data Source=/app/data/prontuario.db
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - api_data:/app/data
 
 volumes:
-  pgdata:
+  api_data:
