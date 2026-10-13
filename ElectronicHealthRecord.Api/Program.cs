@@ -44,7 +44,14 @@ builder.Services.AddScoped<IPrescricaoService, PrescricaoService>();
 
 builder.Services.AddScoped<ITokenService, TokenService>();
 
-var chaveSecreta = builder.Configuration["Jwt:ChaveSecreta"]!;
+var chaveSecreta = builder.Configuration["Jwt:ChaveSecreta"];
+if (string.IsNullOrWhiteSpace(chaveSecreta) || Encoding.UTF8.GetByteCount(chaveSecreta) < 32)
+{
+    throw new InvalidOperationException(
+        "A chave JWT (Jwt:ChaveSecreta) nao esta configurada ou tem menos de 32 bytes. " +
+        "Em desenvolvimento use: dotnet user-secrets set \"Jwt:ChaveSecreta\" \"<chave>\" --project ElectronicHealthRecord.Api. " +
+        "Em Docker/producao use a variavel de ambiente Jwt__ChaveSecreta.");
+}
 var key = Encoding.UTF8.GetBytes(chaveSecreta);
 builder.Services.AddAuthentication(options =>
 {
