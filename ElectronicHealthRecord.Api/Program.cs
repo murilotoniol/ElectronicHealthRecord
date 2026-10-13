@@ -42,7 +42,10 @@ builder.Services.AddScoped<IRegistroClinicoService, RegistroClinicoService>();
 builder.Services.AddScoped<IPrescricaoRepository, PrescricaoRepository>();
 builder.Services.AddScoped<IPrescricaoService, PrescricaoService>();
 
+builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
+builder.Services.AddScoped<ISenhaHasher, SenhaHasher>();
 builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
 
 var chaveSecreta = builder.Configuration["Jwt:ChaveSecreta"];
 if (string.IsNullOrWhiteSpace(chaveSecreta) || Encoding.UTF8.GetByteCount(chaveSecreta) < 32)
@@ -85,6 +88,11 @@ if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
     app.MapScalarApiReference();
+
+    using var scope = app.Services.CreateScope();
+    var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    await context.Database.MigrateAsync();
+    await DbSeeder.SeedUsuariosDemoAsync(context, scope.ServiceProvider.GetRequiredService<ISenhaHasher>());
 }
 
 app.UseHttpsRedirection();
