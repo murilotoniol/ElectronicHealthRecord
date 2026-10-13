@@ -1,4 +1,4 @@
-﻿using ElectronicHealthRecord.Application.DTOs.RegistroClinico;
+using ElectronicHealthRecord.Application.DTOs.RegistroClinico;
 using ElectronicHealthRecord.Application.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -8,6 +8,8 @@ namespace ElectronicHealthRecord.Api.Controllers
     [ApiController]
     [Route("api/registrosclinicos")]
     [Authorize(Roles = "Medico")]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public class RegistroClinicoController : ControllerBase
     {
         private readonly IRegistroClinicoService _registroClinicoService;
@@ -18,7 +20,7 @@ namespace ElectronicHealthRecord.Api.Controllers
         }
 
         [HttpGet]
-        [ProducesResponseType(typeof(RegistroClinicoResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(IEnumerable<RegistroClinicoResponse>), StatusCodes.Status200OK)]
         public async Task<ActionResult<IEnumerable<RegistroClinicoResponse>>> ObterTodos()
         {
             var registrosClinicos = await _registroClinicoService.ObterTodosAsync();
@@ -27,38 +29,27 @@ namespace ElectronicHealthRecord.Api.Controllers
 
         [HttpGet("{id:guid}")]
         [ProducesResponseType(typeof(RegistroClinicoResponse), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
         public async Task<ActionResult<RegistroClinicoResponse>> ObterPorId(Guid id)
         {
-            try
-            {
-                var registroClinico = await _registroClinicoService.ObterPorIdAsync(id);
-                return Ok(registroClinico);
-            }
-            catch (KeyNotFoundException ex)
-            {
-                return NotFound(new { mensagem = ex.Message });
-            }
+            var registroClinico = await _registroClinicoService.ObterPorIdAsync(id);
+            return Ok(registroClinico);
         }
 
         [HttpPost]
         [ProducesResponseType(typeof(RegistroClinicoResponse), StatusCodes.Status201Created)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status409Conflict)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status422UnprocessableEntity)]
         public async Task<ActionResult<RegistroClinicoResponse>> Criar([FromBody] CriarRegistroClinicoRequest request)
         {
-            try
-            {
-                var novoRegistroClinico = await _registroClinicoService.CriarAsync(request);
-                return CreatedAtAction(
-                    nameof(ObterPorId),
-                    new { id = novoRegistroClinico.Id },
-                    novoRegistroClinico
-                );
-            }
-            catch (InvalidOperationException ex)
-            {
-                return BadRequest(new { mensagem = ex.Message });
-            }
+            var novoRegistroClinico = await _registroClinicoService.CriarAsync(request);
+            return CreatedAtAction(
+                nameof(ObterPorId),
+                new { id = novoRegistroClinico.Id },
+                novoRegistroClinico
+            );
         }
     }
 }
