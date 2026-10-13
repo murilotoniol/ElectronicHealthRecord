@@ -168,6 +168,40 @@ namespace ElectronicHealthRecord.Infrastructure.Migrations
                     b.ToTable("RegistrosClinicos", (string)null);
                 });
 
+            modelBuilder.Entity("ElectronicHealthRecord.Domain.Entidades.Usuario", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Nome")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Perfil")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("SenhaHash")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Email")
+                        .IsUnique();
+
+                    b.ToTable("Usuarios", (string)null);
+                });
+
             modelBuilder.Entity("ElectronicHealthRecord.Domain.Entidades.Atendimento", b =>
                 {
                     b.HasOne("ElectronicHealthRecord.Domain.Entidades.Paciente", "Paciente")
