@@ -6,3 +6,6 @@ obj/
 *.db
 *.db-shm
 *.db-wal
+
+# Variaveis de ambiente locais e segredos
+.env
