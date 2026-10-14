@@ -3,4 +3,5 @@
   <Project Path="ElectronicHealthRecord.Application/ElectronicHealthRecord.Application.csproj" />
   <Project Path="ElectronicHealthRecord.Domain/ElectronicHealthRecord.Domain.csproj" />
   <Project Path="ElectronicHealthRecord.Infrastructure/ElectronicHealthRecord.Infrastructure.csproj" />
+  <Project Path="ElectronicHealthRecord.Tests/ElectronicHealthRecord.Tests.csproj" />
 </Solution>
