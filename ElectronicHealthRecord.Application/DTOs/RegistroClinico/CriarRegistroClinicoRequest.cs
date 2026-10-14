@@ -1,4 +1,4 @@
-﻿using ElectronicHealthRecord.Application.DTOs.Prescricao;
+using ElectronicHealthRecord.Application.DTOs.Prescricao;
 
 namespace ElectronicHealthRecord.Application.DTOs.RegistroClinico
 {
@@ -7,6 +7,6 @@ namespace ElectronicHealthRecord.Application.DTOs.RegistroClinico
         string Queixa,
         string Diagnostico,
         string Observacoes,
-        IEnumerable<CriarPrescricaoRequest>? Prescricoes
+        IEnumerable<CriarPrescricaoRequest>? Prescricoes = null
     );
 }
