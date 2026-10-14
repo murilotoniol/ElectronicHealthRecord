@@ -1,6 +1,5 @@
 # 🏥 Electronic Health Record (Prontuário Eletrônico) API
 
-[![CI - Build, Test & Docker](https://github.com/murilobesson/ElectronicHealthRecord/actions/workflows/ci.yml/badge.svg)](https://github.com/murilobesson/ElectronicHealthRecord/actions)
 ![.NET Version](https://img.shields.io/badge/.NET-10.0-purple?style=flat&logo=dotnet)
 ![Database](https://img.shields.io/badge/PostgreSQL-16-blue?style=flat&logo=postgresql)
 ![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?style=flat&logo=docker)
